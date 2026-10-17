@@ -6,7 +6,11 @@ Wavefold is a free, open-source signal playground for exploring how sine waves c
 
 ## Project status
 
-Project initialized. The technology stack has not been selected, and there is no runnable application yet.
+Day 1 prototype: a working browser instrument with up to four sine waves, editable frequency/amplitude/phase, a combined waveform, and audio playback. The interface uses a light scientific workspace.
+
+Built with React, TypeScript, Vite, Canvas 2D, and the Web Audio API. Everything runs locally in the browser. There are no accounts, backend services, or database. Fonts are bundled with the application.
+
+The frequency-components view, preset selector, and shareable links listed below are planned for the next stage; they are not implemented yet.
 
 ## First release
 
@@ -21,7 +25,33 @@ Microphone input, uploads, custom wave drawing, filters, exports, and Fourier-ci
 
 ## Development
 
-Setup and run instructions will be added after the stack is chosen.
+Use Node.js 22.12 or newer (developed with Node.js 24) and npm.
+
+```sh
+npm ci
+npm run dev
+```
+
+Open the local URL printed by Vite. Audio requires localhost or HTTPS and starts only after pressing **Play sound**. Switching away from the tab stops playback.
+
+Start with the two default waves at 220 Hz and 224 Hz. Change the second frequency to 222 Hz to slow the beating. Choose a 10 ms time window to inspect individual oscillations. For cancellation, give both waves the same frequency and amplitude, then set one phase to 180 degrees.
+
+```sh
+npm run typecheck
+npm test
+npx playwright install chromium
+npm run test:browser
+npm run build
+npm run preview
+```
+
+`npm run format` formats the project; `npm run format:check` checks formatting.
+
+Cloudflare static hosting is the intended deployment target. The production build outputs to `dist/`. The prototype has not been deployed.
+
+## How it works
+
+See [the implementation walkthrough](docs/architecture.md) for the signal model, audio lifecycle, plotting decisions, and code map.
 
 ## License
 
