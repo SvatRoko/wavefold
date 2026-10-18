@@ -2,22 +2,88 @@ import { useEffect, useRef, useState } from 'react';
 import { AudioEngine } from './audio/engine';
 import WaveControls from './components/WaveControls';
 import Waveform from './components/Waveform';
-import { COLORS, INITIAL_WAVES, MAX_WAVES, type Wave } from './signal';
+import Spectrum from './components/Spectrum';
+import ExperimentGuide from './components/ExperimentGuide';
+import ShareDialog from './components/ShareDialog';
+import {
+  defaultExperiment,
+  decodeExperiment,
+  type Experiment,
+} from './experiment';
+import { getPreset, matchesPreset, PRESETS, type PresetId } from './presets';
+import { COLORS, MAX_WAVES, type Wave } from './signal';
 
 export default function App() {
-  const [waves, setWaves] = useState<Wave[]>(() =>
-    INITIAL_WAVES.map((w) => ({ ...w })),
+  const [initial] = useState(() => decodeExperiment(window.location.hash));
+  const [waves, setWaves] = useState<Wave[]>(
+    () => (initial ?? defaultExperiment()).waves,
+  );
+  const [preset, setPreset] = useState<PresetId>(initial?.preset ?? 'beats');
+  const [spectrumView, setSpectrumView] = useState<'auto' | 'full'>(
+    initial?.spectrumView ?? 'auto',
+  );
+  const [shareOpen, setShareOpen] = useState(false);
+  const [linkNotice, setLinkNotice] = useState(() =>
+    initial
+      ? 'Shared experiment loaded. Press Play when you’re ready.'
+      : window.location.hash
+        ? 'This experiment link could not be read. The default Beats experiment is loaded instead.'
+        : '',
   );
   const [volume, setVolume] = useState(0.15);
   const [playing, setPlaying] = useState(false);
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState('');
-  const [duration, setDuration] = useState(0.5);
-  const [showComponents, setShowComponents] = useState(true);
+  const [duration, setDuration] = useState(initial?.duration ?? 0.5);
+  const [showComponents, setShowComponents] = useState(
+    initial?.showComponents ?? true,
+  );
   const engine = useRef<AudioEngine | null>(null);
   const latest = useRef({ waves, volume });
   latest.current = { waves, volume };
   const playAttempt = useRef(0);
+
+  function applyExperiment(experiment: Experiment) {
+    setWaves(experiment.waves.map((w) => ({ ...w })));
+    setPreset(experiment.preset);
+    setDuration(experiment.duration);
+    setShowComponents(experiment.showComponents);
+    setSpectrumView(experiment.spectrumView);
+  }
+
+  function selectPreset(id: PresetId) {
+    const selected = getPreset(id);
+    applyExperiment({
+      waves: selected.waves,
+      preset: id,
+      duration: selected.duration,
+      showComponents: true,
+      spectrumView: 'auto',
+    });
+    setLinkNotice('');
+  }
+
+  useEffect(() => {
+    const loadLink = () => {
+      ++playAttempt.current;
+      engine.current?.stop();
+      setPlaying(false);
+      setStarting(false);
+      setShareOpen(false);
+      setVolume(0.15);
+      const decoded = decodeExperiment(window.location.hash);
+      applyExperiment(decoded ?? defaultExperiment());
+      setLinkNotice(
+        decoded
+          ? 'Shared experiment loaded. Press Play when you’re ready.'
+          : window.location.hash
+            ? 'This experiment link could not be read. The default Beats experiment is loaded instead.'
+            : '',
+      );
+    };
+    window.addEventListener('hashchange', loadLink);
+    return () => window.removeEventListener('hashchange', loadLink);
+  }, []);
 
   useEffect(() => {
     engine.current = new AudioEngine();
@@ -65,12 +131,7 @@ export default function App() {
     }
   }
 
-  const active = waves.filter((w) => !w.muted && w.amplitude > 0);
-  const beatRate =
-    active.length === 2
-      ? Math.abs(active[0].frequency - active[1].frequency)
-      : null;
-  const beats = beatRate !== null && beatRate > 0 && beatRate <= 20;
+  const edited = !matchesPreset(waves, preset);
 
   return (
     <div className="app-shell">
@@ -104,8 +165,17 @@ export default function App() {
             </p>
           </div>
           <div className="edition">
-            <span>EXPERIMENT / 001</span>
-            <strong>Superposition</strong>
+            <span>
+              EXPERIMENT /{' '}
+              {String(PRESETS.findIndex((p) => p.id === preset) + 1).padStart(
+                3,
+                '0',
+              )}
+            </span>
+            <strong>
+              {getPreset(preset).name}
+              {edited ? ' · edited' : ''}
+            </strong>
           </div>
         </div>
 
@@ -124,25 +194,64 @@ export default function App() {
               {playing ? 'Sound is playing' : 'Ready when you are'}
             </span>
           </div>
-          <label className="master-volume">
-            <span>Volume</span>
-            <input
-              type="range"
-              min="0"
-              max="0.5"
-              step="0.01"
-              value={volume}
-              onChange={(event) => setVolume(Number(event.target.value))}
-              aria-label="Master volume"
-            />
-            <output>{Math.round(volume * 100)}%</output>
-          </label>
+          <div className="transport-right">
+            <label className="master-volume">
+              <span>Volume</span>
+              <input
+                type="range"
+                min="0"
+                max="0.5"
+                step="0.01"
+                value={volume}
+                onChange={(event) => setVolume(Number(event.target.value))}
+                aria-label="Master volume"
+              />
+              <output>{Math.round(volume * 100)}%</output>
+            </label>
+            <button className="share-button" onClick={() => setShareOpen(true)}>
+              Share experiment <span aria-hidden="true">↗</span>
+            </button>
+          </div>
         </div>
         {error && (
           <p className="error" role="alert">
             {error}
           </p>
         )}
+
+        {linkNotice && (
+          <p className="link-notice" role="status">
+            {linkNotice}
+            <button
+              className="text-button"
+              aria-label="Dismiss link notice"
+              onClick={() => setLinkNotice('')}
+            >
+              ×
+            </button>
+          </p>
+        )}
+        <nav className="presets" aria-label="Experiments">
+          {PRESETS.map((item, index) => (
+            <button
+              key={item.id}
+              className={`preset-button ${preset === item.id ? 'selected' : ''}`}
+              aria-pressed={preset === item.id}
+              onClick={() => selectPreset(item.id)}
+            >
+              <span className="preset-number">0{index + 1}</span>
+              <span>
+                <strong>{item.name}</strong>
+                <small>{item.subtitle}</small>
+              </span>
+              {preset === item.id && (
+                <span className="preset-mark" aria-hidden="true">
+                  {edited ? '↳' : '•'}
+                </span>
+              )}
+            </button>
+          ))}
+        </nav>
 
         <div className="workspace">
           <div className="visual-column">
@@ -208,38 +317,12 @@ export default function App() {
               </p>
             </section>
 
-            <section className="insight" aria-labelledby="insight-heading">
-              <div className="insight-symbol" aria-hidden="true">
-                ∿
-              </div>
-              <div>
-                <p className="eyebrow">A SMALL EXPERIMENT</p>
-                <h2 id="insight-heading">
-                  {beats
-                    ? 'Hear the space between two notes.'
-                    : 'Every wave adds to the story.'}
-                </h2>
-                <p>
-                  {beats ? (
-                    <>
-                      These waves are <strong>{beatRate} Hz apart</strong>.
-                      Together, they produce {beatRate}{' '}
-                      {beatRate === 1 ? 'beat' : 'beats'} per second. Bring
-                      their frequencies closer and listen to the pulsing slow
-                      down.
-                    </>
-                  ) : (
-                    'Waves add point by point. Match two frequencies, give them equal amplitudes, and set one phase to 180° to hear them cancel.'
-                  )}
-                </p>
-                <div className="try-note">
-                  <span>TRY THIS</span>
-                  {beats
-                    ? 'Set the time window to 10 ms to see the individual oscillations.'
-                    : 'Change a frequency or phase and watch the combined signal respond.'}
-                </div>
-              </div>
-            </section>
+            <Spectrum
+              waves={waves}
+              view={spectrumView}
+              onViewChange={setSpectrumView}
+            />
+            <ExperimentGuide waves={waves} preset={preset} />
             <div className="equation-note">
               <span>THE IDEA IS SIMPLE</span>
               <code>y(t) = Σ Aᵢ sin(2πfᵢt + φᵢ)</code>
@@ -315,9 +398,7 @@ export default function App() {
             <button
               className="reset-button"
               onClick={() => {
-                setWaves(INITIAL_WAVES.map((w) => ({ ...w })));
-                setDuration(0.5);
-                setShowComponents(true);
+                selectPreset(preset);
               }}
             >
               ↺ Reset experiment
@@ -325,6 +406,31 @@ export default function App() {
             <p className="controls-hint">
               Drag to explore. Type a value and press Enter for precision.
             </p>
+            <details className="control-help">
+              <summary>What do these controls do?</summary>
+              <dl>
+                <dt>Frequency · Hz</dt>
+                <dd>
+                  Cycles per second. Higher values produce a higher pitch.
+                  Explore 20–2,000 Hz.
+                </dd>
+                <dt>Amplitude · 0–1</dt>
+                <dd>
+                  The height of a wave before master volume. Higher amplitudes
+                  contribute more to the combined sound.
+                </dd>
+                <dt>Phase · degrees</dt>
+                <dd>
+                  The starting position in a cycle. A 180° shift flips a sine
+                  wave; 360° returns to its starting position.
+                </dd>
+                <dt>Mute</dt>
+                <dd>
+                  Removes a wave from the sound and graphs while keeping its
+                  settings.
+                </dd>
+              </dl>
+            </details>
           </aside>
         </div>
       </main>
@@ -332,6 +438,12 @@ export default function App() {
         <span>Made for curious ears and minds.</span>
         <span>Free to explore. Open by nature.</span>
       </footer>
+      {shareOpen && (
+        <ShareDialog
+          experiment={{ waves, preset, duration, showComponents, spectrumView }}
+          onClose={() => setShareOpen(false)}
+        />
+      )}
     </div>
   );
 }

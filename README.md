@@ -6,11 +6,11 @@ Wavefold is a free, open-source signal playground for exploring how sine waves c
 
 ## Project status
 
-Day 1 prototype: a working browser instrument with up to four sine waves, editable frequency/amplitude/phase, a combined waveform, and audio playback. The interface uses a light scientific workspace.
+Day 2 prototype: a complete browser instrument with up to four sine waves, editable frequency/amplitude/phase, a combined waveform, an ideal frequency spectrum, four guided experiments, share links, and audio playback. The interface uses a light scientific workspace. First-release feature scope is frozen; release testing and Cloudflare deployment come next.
 
 Built with React, TypeScript, Vite, Canvas 2D, and the Web Audio API. Everything runs locally in the browser. There are no accounts, backend services, or database. Fonts are bundled with the application.
 
-The frequency-components view, preset selector, and shareable links listed below are planned for the next stage; they are not implemented yet.
+The frequency-components view combines waves at the same frequency using their phases, so cancellation is represented correctly. Share links restore experiment settings without starting audio. Links point to whichever host is running the application; localhost links require that local server, and public sharing becomes available after deployment.
 
 ## First release
 
@@ -51,7 +51,7 @@ Cloudflare static hosting is the intended deployment target. The production buil
 
 ## How it works
 
-See [the implementation walkthrough](docs/architecture.md) for the signal model, audio lifecycle, plotting decisions, and code map.
+See the [Day 1 walkthrough](docs/architecture.md) for the signal model, audio lifecycle, plotting decisions, and code map. The [Day 2 walkthrough](docs/day-2-walkthrough.md) covers the spectrum mathematics, presets, URL sharing, responsive layout, test coverage, and frozen release scope.
 
 ## License
 

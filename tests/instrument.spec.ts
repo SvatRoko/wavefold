@@ -22,7 +22,7 @@ test('starts silently, redraws with edits, and plays and stops without errors', 
   await expect(
     wave2.getByRole('slider', { name: 'Frequency', exact: true }),
   ).toHaveValue('222');
-  await expect(page.getByText('2 Hz apart', { exact: true })).toBeVisible();
+  await expect(page.getByText(/These waves are 2 Hz apart/)).toBeVisible();
   const after = await canvas.evaluate((node: HTMLCanvasElement) =>
     node.toDataURL(),
   );
