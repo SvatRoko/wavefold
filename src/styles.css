@@ -103,7 +103,7 @@ h3,
   font-weight: 500;
 }
 .header-note {
-  color: #65705d;
+  color: #58664f;
   font-size: 9px;
 }
 .source-link {
@@ -123,7 +123,7 @@ h3,
 }
 .eyebrow {
   font-size: 9px;
-  color: #65705d;
+  color: #58664f;
   letter-spacing: 1.7px;
 }
 .intro .eyebrow {
@@ -147,7 +147,7 @@ h1 {
 }
 .intro-copy {
   font-size: 14px;
-  color: #65705d;
+  color: #58664f;
   margin-top: 12px;
 }
 .edition {
@@ -158,13 +158,13 @@ h1 {
   gap: 9px;
 }
 .edition > span {
-  color: #65705d;
+  color: #58664f;
   font-size: 9px;
 }
 .edition strong {
   font-weight: 450;
   font-size: 12px;
-  color: #6d7867;
+  color: #58664f;
 }
 .transport {
   display: flex;
@@ -208,7 +208,7 @@ h1 {
   display: flex;
   align-items: center;
   gap: 7px;
-  color: #65705d;
+  color: #58664f;
 }
 .status-dot {
   height: 5px;
@@ -224,7 +224,7 @@ h1 {
   align-items: center;
   gap: 14px;
   font-size: 11px;
-  color: #788271;
+  color: #58664f;
 }
 .master-volume input {
   width: 104px;
@@ -265,7 +265,7 @@ h1 {
   padding: 7px 9px;
   border: 1px solid #e1e5d9;
   border-radius: 4px;
-  color: #65705d;
+  color: #58664f;
 }
 .legend {
   display: flex;
@@ -278,7 +278,7 @@ h1 {
   align-items: center;
   gap: 6px;
   font-size: 10px;
-  color: #65705d;
+  color: #58664f;
 }
 .legend i {
   width: 13px;
@@ -289,7 +289,7 @@ h1 {
   color: #425343;
 }
 .legend-muted {
-  opacity: 0.45;
+  opacity: 1;
 }
 .waveform {
   display: block;
@@ -305,7 +305,7 @@ h1 {
   justify-content: space-between;
   gap: 14px;
   font-size: 10px;
-  color: #75806d;
+  color: #58664f;
 }
 .checkbox-label {
   display: flex;
@@ -333,7 +333,7 @@ h1 {
 }
 .plot-caption {
   font-size: 10px;
-  color: #65705d;
+  color: #58664f;
   line-height: 1.6;
   margin-top: 13px;
 }
@@ -349,7 +349,7 @@ h1 {
 }
 .wave-count {
   font-size: 10px;
-  color: #65705d;
+  color: #58664f;
   letter-spacing: 1px;
 }
 .wave-cards {
@@ -388,7 +388,7 @@ h1 {
 .sine-tag {
   font-size: 8px;
   letter-spacing: 0.6px;
-  color: #65705d;
+  color: #58664f;
   margin-left: 1px;
 }
 .wave-actions {
@@ -400,12 +400,12 @@ h1 {
 .remove-button {
   border: 0;
   background: none;
-  color: #89917f;
+  color: #58664f;
   padding: 3px;
   font-size: 10px;
 }
 .mute-button {
-  color: var(--wave-color);
+  color: #425343;
   border-radius: 3px;
   min-width: 32px;
 }
@@ -421,7 +421,7 @@ h1 {
   background: #a7aba1;
 }
 .muted .parameter {
-  opacity: 0.5;
+  opacity: 1;
 }
 .parameter + .parameter {
   margin-top: 15px;
@@ -432,7 +432,7 @@ h1 {
   justify-content: space-between;
   margin-bottom: 9px;
   font-size: 11px;
-  color: #65705d;
+  color: #58664f;
 }
 .number-field {
   display: flex;
@@ -514,7 +514,7 @@ input[type='range']::-moz-range-thumb {
   background: transparent;
   border: 1px dashed #cdd4c3;
   padding: 13px;
-  color: #65705d;
+  color: #58664f;
   border-radius: 6px;
   font-size: 11px;
   margin-top: 15px;
@@ -534,7 +534,7 @@ input[type='range']::-moz-range-thumb {
   margin: 17px auto 0;
   background: none;
   border: 0;
-  color: #65705d;
+  color: #58664f;
   font-size: 10px;
 }
 .reset-button:hover {
@@ -545,7 +545,7 @@ input[type='range']::-moz-range-thumb {
   line-height: 1.7;
   text-align: center;
   margin-top: 15px;
-  color: #65705d;
+  color: #58664f;
 }
 .insight {
   display: flex;
@@ -576,7 +576,7 @@ input[type='range']::-moz-range-thumb {
 .insight p:not(.eyebrow) {
   font-size: 12px;
   line-height: 1.85;
-  color: #65705d;
+  color: #58664f;
   margin-top: 9px;
   max-width: 550px;
 }
@@ -589,7 +589,7 @@ input[type='range']::-moz-range-thumb {
   gap: 12px;
   font-size: 10px;
   line-height: 1.7;
-  color: #71835d;
+  color: #58664f;
   margin-top: 14px;
 }
 .try-note > span {
@@ -604,7 +604,7 @@ input[type='range']::-moz-range-thumb {
 .equation-note > span {
   font-size: 8px;
   letter-spacing: 1.5px;
-  color: #65705d;
+  color: #58664f;
 }
 .equation-note code {
   font-family: Georgia, serif;
@@ -612,11 +612,11 @@ input[type='range']::-moz-range-thumb {
   font-size: 19px;
   display: block;
   margin-top: 11px;
-  color: #6e7b62;
+  color: #58664f;
 }
 .equation-note p {
   font-size: 10px;
-  color: #65705d;
+  color: #58664f;
   margin-top: 9px;
 }
 footer {
@@ -626,13 +626,13 @@ footer {
   display: flex;
   justify-content: space-between;
   font-size: 10px;
-  color: #65705d;
+  color: #58664f;
 }
 .empty-state {
   padding: 25px 15px;
   border: 1px dashed #cdd4c3;
   border-radius: 6px;
-  color: #65705d;
+  color: #58664f;
   text-align: center;
   line-height: 1.8;
   font-size: 12px;
@@ -862,7 +862,7 @@ footer {
   border: 1px solid #dfe3d6;
   background: transparent;
   border-radius: 7px;
-  color: #65705d;
+  color: #58664f;
   min-width: 0;
 }
 .preset-button:hover {
@@ -876,7 +876,7 @@ footer {
 .preset-number {
   font-family: ui-monospace, monospace;
   font-size: 10px;
-  opacity: 0.75;
+  opacity: 1;
 }
 .preset-button strong {
   display: block;
@@ -898,7 +898,7 @@ footer {
 }
 .spectrum-intro {
   font-size: 11px;
-  color: #65705d;
+  color: #58664f;
   margin: 13px 0 16px;
 }
 .spectrum-plot svg {
@@ -909,7 +909,7 @@ footer {
 .spectrum-plot text {
   font-family: ui-monospace, monospace;
   font-size: 10px;
-  fill: #65705d;
+  fill: #58664f;
 }
 .spectrum-grid {
   stroke: #e4e8dd;
@@ -935,7 +935,7 @@ footer {
   border: 1px solid #e4e8dd;
   border-radius: 4px;
   font-size: 10px;
-  color: #65705d;
+  color: #58664f;
 }
 .component-values strong {
   font-weight: 500;
@@ -953,7 +953,7 @@ footer {
 .control-help {
   font-size: 11px;
   line-height: 1.8;
-  color: #65705d;
+  color: #58664f;
   margin-top: 17px;
 }
 summary {
@@ -1023,7 +1023,7 @@ summary:focus-visible {
 .share-content p {
   font-size: 12px;
   line-height: 1.8;
-  color: #65705d;
+  color: #58664f;
   margin-top: 15px;
 }
 .share-content label {

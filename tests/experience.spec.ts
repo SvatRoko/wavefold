@@ -69,8 +69,10 @@ test('shared links restore a modified experiment and views with sound off', asyn
     .getByRole('combobox', { name: 'Frequency range' })
     .selectOption('full');
   await page.getByRole('checkbox', { name: 'Show individual waves' }).uncheck();
-  await page.getByRole('button', { name: 'Play sound' }).click();
-  await page.getByRole('button', { name: 'Stop sound' }).waitFor();
+  if (await page.evaluate(() => 'AudioContext' in window)) {
+    await page.getByRole('button', { name: 'Play sound' }).click();
+    await page.getByRole('button', { name: 'Stop sound' }).waitFor();
+  }
   await page.getByRole('button', { name: 'Share experiment' }).click();
   const link = await page
     .getByRole('textbox', { name: 'Experiment link' })

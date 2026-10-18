@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { readdirSync } from 'node:fs';
 
 test('starts silently, redraws with edits, and plays and stops without errors', async ({
   page,
@@ -28,6 +29,11 @@ test('starts silently, redraws with edits, and plays and stops without errors', 
   );
   expect(after).not.toBe(before);
   await page.getByRole('button', { name: 'Play sound' }).click();
+  if (!(await page.evaluate(() => 'AudioContext' in window))) {
+    await expect(page.getByRole('alert')).toContainText('Audio is unavailable');
+    expect(errors).toEqual([]);
+    return;
+  }
   await expect(page.getByRole('button', { name: 'Stop sound' })).toBeVisible();
   await page.getByRole('button', { name: 'Stop sound' }).click();
   await expect(page.getByRole('button', { name: 'Play sound' })).toBeVisible();
@@ -77,7 +83,7 @@ test('clamps typed values, supports keyboard controls, mute, four waves, empty s
 
 test('fits a mobile viewport and exposes working controls', async ({
   page,
-}) => {
+}, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
   expect(
@@ -91,20 +97,31 @@ test('fits a mobile viewport and exposes working controls', async ({
   await expect(
     page.getByRole('img', { name: /Combined waveform over 10 milliseconds/ }),
   ).toBeVisible();
-  await page.screenshot({ path: 'test-results/mobile.png', fullPage: true });
+  await page.screenshot({
+    path: testInfo.outputPath('mobile.png'),
+    fullPage: true,
+  });
 });
 
 test('renders the real bundled worklet with expected sound and cancellation', async ({
   page,
 }) => {
   await page.goto('/');
-  const result = await page.evaluate(async () => {
+  test.skip(
+    !(await page.evaluate(() => 'AudioContext' in window)),
+    'The Windows WebKit test build has no Web Audio implementation.',
+  );
+  await page.getByRole('button', { name: 'Play sound' }).click();
+  await page.getByRole('button', { name: 'Stop sound' }).click();
+  const processorUrl =
+    '/assets/' +
+    readdirSync('dist/assets').find((name) => /^processor-.*\.js$/.test(name));
+  const result = await page.evaluate(async (processorUrl) => {
     // Exercise the worklet bundle in an actual browser audio graph, not just a mock.
-    const imported = await import('/src/audio/processor.ts?worker&url');
     const render = async (phase: number) => {
       const context = new AudioContext({ sampleRate: 48000 });
       await context.resume();
-      await context.audioWorklet.addModule(imported.default);
+      await context.audioWorklet.addModule(processorUrl);
       const node = new AudioWorkletNode(context, 'wavefold-synth', {
         outputChannelCount: [1],
       });
@@ -131,7 +148,7 @@ test('renders the real bundled worklet with expected sound and cancellation', as
       return rms;
     };
     return { inPhase: await render(0), cancelled: await render(180) };
-  });
+  }, processorUrl);
   expect(result.inPhase).toBeCloseTo(0.4 / Math.sqrt(2), 2);
   expect(result.cancelled).toBeLessThan(1e-8);
 });

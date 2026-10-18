@@ -21,3 +21,5 @@ dist/
 *.tsbuildinfo
 playwright-report/
 test-results/
+.wrangler/
+.dev.vars*

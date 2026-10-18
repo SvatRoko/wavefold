@@ -106,7 +106,17 @@ export default function App() {
   useEffect(() => engine.current?.setVolume(volume), [volume]);
 
   async function togglePlayback() {
+    if (starting) return;
     setError('');
+    if (
+      typeof AudioContext === 'undefined' ||
+      typeof AudioWorkletNode === 'undefined'
+    ) {
+      setError(
+        'Audio is unavailable in this browser. You can still explore the waves and graphs. Try a browser with Web Audio support to listen.',
+      );
+      return;
+    }
     if (playing) {
       engine.current?.stop();
       setPlaying(false);
@@ -184,7 +194,7 @@ export default function App() {
             <button
               className={`play-button ${playing ? 'is-playing' : ''}`}
               onClick={togglePlayback}
-              disabled={starting}
+              aria-disabled={starting}
             >
               <span aria-hidden="true">{playing ? '■' : '▶'}</span>
               {starting ? 'Starting…' : playing ? 'Stop sound' : 'Play sound'}
@@ -208,7 +218,13 @@ export default function App() {
               />
               <output>{Math.round(volume * 100)}%</output>
             </label>
-            <button className="share-button" onClick={() => setShareOpen(true)}>
+            <button
+              className="share-button"
+              onClick={(event) => {
+                event.currentTarget.focus();
+                setShareOpen(true);
+              }}
+            >
               Share experiment <span aria-hidden="true">↗</span>
             </button>
           </div>

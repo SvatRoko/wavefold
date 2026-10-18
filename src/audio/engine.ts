@@ -16,6 +16,7 @@ export class AudioEngine {
     const context = (this.context ??= new AudioContext());
     this.initializing = (async () => {
       await context.audioWorklet.addModule(processorUrl);
+      if (this.context !== context || context.state === 'closed') return;
       this.node = new AudioWorkletNode(context, 'wavefold-synth', {
         outputChannelCount: [1],
       });
@@ -34,8 +35,7 @@ export class AudioEngine {
     // Create/resume inside the click handler to honor browser autoplay policies.
     this.context ??= new AudioContext();
     const resume = this.context.resume();
-    await this.initialize();
-    await resume;
+    await Promise.all([this.initialize(), resume]);
     if (generation !== this.generation) return;
     this.setWaves(waves);
     this.setVolume(volume);
