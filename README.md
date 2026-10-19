@@ -68,10 +68,6 @@ React and TypeScript manage the controls. Canvas draws the waveform; SVG draws t
 
 The Web Audio worklet shares the waveform's signal function. Edits fade down for 5 ms before resetting the phase reference and fading back in. Fixed headroom keeps four full-amplitude waves below clipping. Master volume affects listening only, not the mathematical graphs.
 
-- [Day 1: signal model and audio architecture](docs/architecture.md)
-- [Day 2: spectrum, presets, sharing, and scope](docs/day-2-walkthrough.md)
-- [Day 3: release verification and deployment](docs/day-3-walkthrough.md)
-
 ## Contributing
 
 Open an issue with a reproducible example, browser/version, and an experiment link when useful. For a code change, run the validation commands above and explain the behavior it fixes. Please discuss feature additions first to keep the instrument focused.
